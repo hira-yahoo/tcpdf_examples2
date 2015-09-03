@@ -28,16 +28,24 @@ class DeliveriesPdfController //extends Controller
 
         // フォントを登録
         $fontPathRegular = $this->getLibPath() . '/tcpdf/fonts/migmix-2p-regular.ttf';
-        $regularFont = $receipt->addTTFfont($fontPathRegular, '', '', 32);
+//         $regularFont = $receipt->addTTFfont($fontPathRegular, '', '', 32);
+        $font = new TCPDF_FONTS();
+        $regularFont = $font->addTTFfont($fontPathRegular);
 
         $fontPathBold = $this->getLibPath() . '/tcpdf/fonts/migmix-2p-bold.ttf';
-        $boldFont = $receipt->addTTFfont($fontPathBold, '', '', 32);
+//         $boldFont = $receipt->addTTFfont($fontPathBold, '', '', 32);
+        $font = new TCPDF_FONTS();
+        $boldFont = $font->addTTFfont($fontPathBold);
 
         // ページを追加
         $receipt->AddPage();
 
         // テンプレートを読み込み
-        $receipt->setSourceFile($this->getLibPath() . '/tcpdf/tpl/receipt.pdf');
+//         $receipt->setSourceFile($this->getLibPath() . '/tcpdf/tpl/receipt.pdf');
+//         $receipt->setSourceFile($this->getLibPath() . '/tcpdf/tpl/template.pdf');
+//         $receipt->setSourceFile($this->getLibPath() . '/tcpdf/tpl/w01_1.pdf');
+        $receipt->setSourceFile($this->getLibPath() . '/tcpdf/tpl/senijiten.pdf');
+
 
         // 読み込んだPDFの1ページ目のインデックスを取得
         $tplIdx = $receipt->importPage(1);
@@ -49,15 +57,16 @@ class DeliveriesPdfController //extends Controller
         $receipt->SetFont($regularFont, '', 11);
 
         // 書き込む文字列の文字色を指定
-        $receipt->SetTextColor(255, 0, 0);
+        $receipt->SetTextColor(0, 0, 255);
 
         // X : 42mm / Y : 108mm の位置に
-        $receipt->SetXY(42, 108);
+        $receipt->SetXY(59, 248);
 
         // 文字列を書き込む
-        $receipt->Write(0, '山田 太郎');
 
-        $response = new Response(
+        $receipt->Write(0, isset($_POST['name']) ? $_POST['name'].'さん' : '名無しさん');
+
+/*         $response = new Response(
             // Output関数の第一引数にはファイル名、第二引数には出力タイプを指定する
             // 今回は文字列で返してほしいので、ファイル名はnull、出力タイプは S = String を選択する
             $receipt->Output(null, 'S'),
@@ -69,6 +78,9 @@ class DeliveriesPdfController //extends Controller
         $response->headers->set('Content-Disposition', 'attachment; filename="receipt.pdf"');
 
         return $response;
+ */
+//         $receipt->
+        $receipt->output('newpdf.pdf', 'I');
     }
 
     /**
